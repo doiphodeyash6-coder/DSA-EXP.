@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+// Structure to hold student record
+typedef struct {
+    int rollNumber;
+    char grade;
+} Student;
+
+// Function to perform Binary Search on sorted student array
+// Returns index if found, -1 otherwise
+int binarySearch(Student students[], int n, int targetRoll) {
+    int low = 0;
+    int high = n - 1;
+    
+    while (low <= high) {
+        int mid = low + (high - low) / 2;  // Avoid overflow
+        
+        if (students[mid].rollNumber == targetRoll) {
+            return mid;  // Found
+        }
+        
+        if (students[mid].rollNumber < targetRoll) {
+            low = mid + 1;  // Search right half
+        } else {
+            high = mid - 1;  // Search left half
+        }
+    }
+    
+    return -1;  // Not found
+}
+
+int main() {
+    // Sample sorted student data (roll numbers in ascending order)
+    // In a real app, this could be loaded from a file or database
+    Student students[] = {
+        {1001, 'A'}, {1002, 'B'}, {1003, 'A'}, {1004, 'C'},
+        {1005, 'B'}, {1006, 'D'}, {1007, 'A'}, {1008, 'F'},
+        {1009, 'C'}, {1010, 'B'}
+    };
+    
+    int n = sizeof(students) / sizeof(students[0]);  // Number of students
+    int searchRoll;
+    
+    printf("=== Student Grade Lookup System ===\n");
+    printf("Sample Students (Roll No. -> Grade):\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d -> %c\n", students[i].rollNumber, students[i].grade);
+    }
+    printf("\nEnter a roll number to search (e.g., 1005): ");
+    scanf("%d", &searchRoll);
+    
+    int result = binarySearch(students, n, searchRoll);
+    
+    if (result != -1) {
+        printf("Student with Roll Number %d found!\n", searchRoll);
+        printf("Grade: %c\n", students[result].grade);
+    } else {
+        printf("Student with Roll Number %d not found.\n", searchRoll);
+    }
+    
+    return 0;
+}
