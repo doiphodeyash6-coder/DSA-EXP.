@@ -1,0 +1,172 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_SIZE 100  // Maximum array size
+
+// Function to print an array
+void printArray(int arr[], int n, const char* label) {
+    printf("%s: ", label);
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+// Selection Sort
+void selectionSort(int arr[], int n, int* comparisons, int* swaps) {
+    *comparisons = 0;
+    *swaps = 0;
+    for (int i = 0; i < n - 1; i++) {
+        int min_idx = i;
+        for (int j = i + 1; j < n; j++) {
+            (*comparisons)++;
+            if (arr[j] < arr[min_idx]) {
+                min_idx = j;
+            }
+        }
+        if (min_idx != i) {
+            int temp = arr[min_idx];
+            arr[min_idx] = arr[i];
+            arr[i] = temp;
+            (*swaps)++;
+        }
+    }
+}
+
+// Bubble Sort (Optimized)
+void bubbleSort(int arr[], int n, int* comparisons, int* swaps) {
+    *comparisons = 0;
+    *swaps = 0;
+    bool swapped;
+    for (int i = 0; i < n - 1; i++) {
+        swapped = false;
+        for (int j = 0; j < n - i - 1; j++) {
+            (*comparisons)++;
+            if (arr[j] > arr[j + 1]) {
+                int temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
+                (*swaps)++;
+                swapped = true;
+            }
+        }
+        if (!swapped) {
+            break;  // Array is sorted
+        }
+    }
+}
+
+// Insertion Sort
+void insertionSort(int arr[], int n, int* comparisons, int* swaps) {
+    *comparisons = 0;
+    *swaps = 0;
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        while (j >= 0) {
+            (*comparisons)++;
+            if (arr[j] > key) {
+                arr[j + 1] = arr[j];
+                (*swaps)++;  // Count shifts as swaps
+                j--;
+            } else {
+                break;
+            }
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// Function to input array
+void inputArray(int arr[], int n) {
+    printf("Enter %d elements: ", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+}
+
+// Menu-driven main function
+int main() {
+    int arr[MAX_SIZE];
+    int temp[MAX_SIZE];  // Temporary array for sorting
+    int n, choice;
+    int comparisons, swaps;
+    
+    printf("=== Menu-Driven Sorting Program ===\n");
+    printf("Choose a sorting algorithm:\n");
+    printf("1. Selection Sort\n");
+    printf("2. Bubble Sort\n");
+    printf("3. Insertion Sort\n");
+    printf("4. Exit\n");
+    
+    while (true) {
+        printf("\nEnter your choice (1-4): ");
+        scanf("%d", &choice);
+        
+        switch (choice) {
+            case 1:
+                printf("--- Selection Sort ---\n");
+                printf("Enter array size (1-%d): ", MAX_SIZE);
+                scanf("%d", &n);
+                if (n <= 0 || n > MAX_SIZE) {
+                    printf("Invalid size! Try again.\n");
+                    break;
+                }
+                inputArray(arr, n);
+                printArray(arr, n, "Original Array");
+                
+                // Copy to temp and sort
+                for (int i = 0; i < n; i++) temp[i] = arr[i];
+                selectionSort(temp, n, &comparisons, &swaps);
+                printArray(temp, n, "Sorted Array");
+                printf("Comparisons: %d, Swaps: %d\n", comparisons, swaps);
+                break;
+                
+            case 2:
+                printf("--- Bubble Sort ---\n");
+                printf("Enter array size (1-%d): ", MAX_SIZE);
+                scanf("%d", &n);
+                if (n <= 0 || n > MAX_SIZE) {
+                    printf("Invalid size! Try again.\n");
+                    break;
+                }
+                inputArray(arr, n);
+                printArray(arr, n, "Original Array");
+                
+                // Copy to temp and sort
+                for (int i = 0; i < n; i++) temp[i] = arr[i];
+                bubbleSort(temp, n, &comparisons, &swaps);
+                printArray(temp, n, "Sorted Array");
+                printf("Comparisons: %d, Swaps: %d\n", comparisons, swaps);
+                break;
+                
+            case 3:
+                printf("--- Insertion Sort ---\n");
+                printf("Enter array size (1-%d): ", MAX_SIZE);
+                scanf("%d", &n);
+                if (n <= 0 || n > MAX_SIZE) {
+                    printf("Invalid size! Try again.\n");
+                    break;
+                }
+                inputArray(arr, n);
+                printArray(arr, n, "Original Array");
+                
+                // Copy to temp and sort
+                for (int i = 0; i < n; i++) temp[i] = arr[i];
+                insertionSort(temp, n, &comparisons, &swaps);
+                printArray(temp, n, "Sorted Array");
+                printf("Comparisons: %d, Shifts/Swaps: %d\n", comparisons, swaps);
+                break;
+                
+            case 4:
+                printf("Exiting program. Goodbye!\n");
+                exit(0);
+                
+            default:
+                printf("Invalid choice! Please enter 1-4.\n");
+        }
+    }
+    
+    return 0;
+}
