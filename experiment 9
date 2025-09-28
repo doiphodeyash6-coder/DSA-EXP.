@@ -1,0 +1,161 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Node structure
+struct Node {
+    int data;
+    struct Node* next;
+    struct Node* prev;
+};
+
+struct Node* head = NULL;
+
+// Insert at the end
+void insertEnd(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+
+    if (head == NULL) {
+        head = newNode;
+        head->next = head;
+        head->prev = head;
+    } else {
+        struct Node* last = head->prev;
+        last->next = newNode;
+        newNode->prev = last;
+        newNode->next = head;
+        head->prev = newNode;
+    }
+    printf("%d inserted at end.\n", value);
+}
+
+// Insert at the beginning
+void insertBegin(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+
+    if (head == NULL) {
+        head = newNode;
+        head->next = head;
+        head->prev = head;
+    } else {
+        struct Node* last = head->prev;
+        newNode->next = head;
+        newNode->prev = last;
+        last->next = newNode;
+        head->prev = newNode;
+        head = newNode;
+    }
+    printf("%d inserted at beginning.\n", value);
+}
+
+// Delete from beginning
+void deleteBegin() {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    if (head->next == head) {
+        printf("%d deleted.\n", head->data);
+        free(head);
+        head = NULL;
+    } else {
+        struct Node* last = head->prev;
+        struct Node* temp = head;
+        head = head->next;
+        head->prev = last;
+        last->next = head;
+        printf("%d deleted from beginning.\n", temp->data);
+        free(temp);
+    }
+}
+
+// Delete from end
+void deleteEnd() {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    if (head->next == head) {
+        printf("%d deleted.\n", head->data);
+        free(head);
+        head = NULL;
+    } else {
+        struct Node* last = head->prev;
+        struct Node* secondLast = last->prev;
+        secondLast->next = head;
+        head->prev = secondLast;
+        printf("%d deleted from end.\n", last->data);
+        free(last);
+    }
+}
+
+// Display list forward
+void displayForward() {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    struct Node* temp = head;
+    printf("Circular Doubly Linked List (Forward): ");
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    } while (temp != head);
+    printf("(head)\n");
+}
+
+// Display list backward
+void displayBackward() {
+    if (head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+    struct Node* last = head->prev;
+    struct Node* temp = last;
+    printf("Circular Doubly Linked List (Backward): ");
+    do {
+        printf("%d -> ", temp->data);
+        temp = temp->prev;
+    } while (temp != last);
+    printf("(head)\n");
+}
+
+int main() {
+    int choice, value;
+    while (1) {
+        printf("\n--- Circular Doubly Linked List Menu ---\n");
+        printf("1. Insert at End\n2. Insert at Beginning\n3. Delete from Beginning\n4. Delete from End\n5. Display Forward\n6. Display Backward\n7. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            printf("Enter value: ");
+            scanf("%d", &value);
+            insertEnd(value);
+            break;
+        case 2:
+            printf("Enter value: ");
+            scanf("%d", &value);
+            insertBegin(value);
+            break;
+        case 3:
+            deleteBegin();
+            break;
+        case 4:
+            deleteEnd();
+            break;
+        case 5:
+            displayForward();
+            break;
+        case 6:
+            displayBackward();
+            break;
+        case 7:
+            exit(0);
+        default:
+            printf("Invalid choice!\n");
+        }
+    }
+}
