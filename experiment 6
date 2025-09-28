@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Node for Queue (Upcoming Songs)
+struct QNode {
+    char song[50];
+    struct QNode* next;
+};
+
+// Node for Stack (Previous Songs)
+struct SNode {
+    char song[50];
+    struct SNode* next;
+};
+
+struct QNode* front = NULL;
+struct QNode* rear = NULL;
+struct SNode* top = NULL;
+
+// Enqueue song (Add to Upcoming Playlist)
+void enqueue(char* song) {
+    struct QNode* newNode = (struct QNode*)malloc(sizeof(struct QNode));
+    strcpy(newNode->song, song);
+    newNode->next = NULL;
+
+    if (rear == NULL) {
+        front = rear = newNode;
+    } else {
+        rear->next = newNode;
+        rear = newNode;
+    }
+    printf("Added to playlist: %s\n", song);
+}
+
+// Dequeue song (Play next song)
+char* dequeue() {
+    if (front == NULL) {
+        printf("No upcoming songs in the playlist!\n");
+        return NULL;
+    }
+    struct QNode* temp = front;
+    char* song = temp->song;
+    front = front->next;
+    if (front == NULL) rear = NULL;
+    free(temp);
+    return song;
+}
+
+// Push song to Stack (History)
+void push(char* song) {
+    struct SNode* newNode = (struct SNode*)malloc(sizeof(struct SNode));
+    strcpy(newNode->song, song);
+    newNode->next = top;
+    top = newNode;
+}
+
+// Pop song from Stack (Go back to previous song)
+char* pop() {
+    if (top == NULL) {
+        printf("No previous songs!\n");
+        return NULL;
+    }
+    struct SNode* temp = top;
+    char* song = temp->song;
+    top = top->next;
+    free(temp);
+    return song;
+}
+
+// Display Upcoming Songs
+void displayUpcoming() {
+    if (front == NULL) {
+        printf("No upcoming songs.\n");
+        return;
+    }
+    struct QNode* temp = front;
+    printf("Upcoming songs: ");
+    while (temp != NULL) {
+        printf("%s -> ", temp->song);
+        temp = temp->next;
+    }
+    printf("END\n");
+}
+
+// Display Previous Songs
+void displayHistory() {
+    if (top == NULL) {
+        printf("No previous songs.\n");
+        return;
+    }
+    struct SNode* temp = top;
+    printf("Song history: ");
+    while (temp != NULL) {
+        printf("%s -> ", temp->song);
+        temp = temp->next;
+    }
+    printf("END\n");
+}
+
+int main() {
+    int choice;
+    char song[50];
+    char* currentSong = NULL;
+
+    while (1) {
+        printf("\n--- Music Player Menu ---\n");
+        printf("1. Add Song to Playlist\n");
+        printf("2. Play Next Song\n");
+        printf("3. Play Previous Song\n");
+        printf("4. Show Upcoming Songs\n");
+        printf("5. Show Song History\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+        getchar(); // clear newline
+
+        switch (choice) {
+        case 1:
+            printf("Enter song name: ");
+            fgets(song, sizeof(song), stdin);
+            song[strcspn(song, "\n")] = '\0'; // remove newline
+            enqueue(song);
+            break;
+        case 2:
+            if (currentSong != NULL) push(currentSong); // save current song to history
+            currentSong = dequeue();
+            if (currentSong != NULL) printf("Now Playing: %s\n", currentSong);
+            break;
+        case 3:
+            if (currentSong != NULL) enqueue(currentSong); // send current to queue again
+            currentSong = pop();
+            if (currentSong != NULL) printf("Now Playing (Previous): %s\n", currentSong);
+            break;
+        case 4:
+            displayUpcoming();
+            break;
+        case 5:
+            displayHistory();
+            break;
+        case 6:
+            return 0;
+        default:
+            printf("Invalid choice!\n");
+        }
+    }
+}
